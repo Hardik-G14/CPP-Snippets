@@ -1,0 +1,86 @@
+<snippet>
+	<content><![CDATA[
+struct SegmentTree{
+    int n;
+    vector<int> st;
+    // idempotent function here
+    int operation(int a,int b){
+        return a + b; 
+    }
+
+    void make(int node,int left,int right,vector<int> & arr){
+        // leaf node base case
+        if(left == right){
+            st[node] = arr[left];
+            return;
+        }
+
+        int mid = left + (right - left)/2;
+
+        //left subtree (left, mid)
+        make(node<<1, left, mid, arr);
+
+        //right subtree (mid + 1, right)
+        make(node<<1|1, mid + 1, right, arr);
+
+        //computation
+        st[node] = operation(st[node<<1], st[node<<1|1]);
+    }
+
+    int query(int node,int start,int end, int left, int right){
+        // non overlapping case 
+        if(end < left or start > right)return 0;
+
+        // complete overlap case
+        if(start >= left and end <= right)return st[node];
+
+        // partial case
+        int mid  = start + (end - start)/2;
+
+        int q1 = query(node<<1, start, mid, left, right);
+        int q2 = query(node<<1|1, mid + 1, end, left, right);
+
+        return operation(q1,q2);
+    }
+
+    void update(int node,int start,int end, int index, int value){
+        //base case
+        if(start == end){
+            st[node] = value;
+            return;
+        }
+
+        int mid = start + (end - start)/2;
+
+        if(index <= mid){
+            // left subtree
+            update(node<<1, start, mid, index, value);
+        }else{
+            // right subtree
+            update(node<<1|1, mid + 1, end, index, value);
+        }
+
+        // computation as we go up the tree
+        st[node] = operation(st[node<<1], st[node<<1|1]);
+    }
+
+    SegmentTree(vector<int> &a){
+        n = a.size();
+        st.resize(4*n);
+        make(1,0,n-1,a);
+    }
+
+    int query(int left,int right){
+        return query(1,0,n-1,left,right);
+    }
+
+    void update(int index,int value){
+        update(1, 0, n - 1, index, value);
+    }
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>SegmentTree</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

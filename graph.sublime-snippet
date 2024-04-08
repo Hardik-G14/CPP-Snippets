@@ -1,0 +1,63 @@
+<snippet>
+	<content><![CDATA[
+// can be used both for graph indexing 0 and 1
+class Graph{
+	int V;
+	list<int>*l;
+
+public:
+	Graph(int v){
+		this->V=v;
+		l= new list<int>[V+1];
+	}
+
+	void addEdge(int i,int j,bool undir=true){
+		l[i].push_back(j);
+		if(undir)l[j].push_back(i);
+	}
+
+	void printList(){
+		for(int i=0;i<=V;i++){
+			cout<<i<<": ";
+			for(auto &val:l[i])cout<<val<<" ";
+			cout<<endl;
+		}
+	}
+
+	void bfs(int source){
+		queue<int> q;
+		vector<bool> visited(V+1,false);
+
+		q.push(source);
+		visited[source]=true;
+
+		while(!q.empty()){
+			int f = q.front();
+			cout<<f<<" ";
+			q.pop();
+
+			for(auto &val:l[f]){
+				if(!visited[val])q.push(val),visited[val]=true;
+			}
+		}
+	}
+
+	void dfs(int source,vector<bool>&visi){
+		cout<<source<<" ";
+		visi[source]=true;
+		for(auto &val:l[source]){
+			if(!visi[val])dfs(val,visi);
+		}
+	}
+
+	void dfs(int source){
+		vector<bool> visi(V+1,false);
+		dfs(source,visi);
+	}
+};
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>graph</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>
